@@ -1,56 +1,184 @@
+# ============================================
+# Docker Compose - Sistema de Citas Barbería
+# Configuración completa para producción
+# ============================================
+
 version: '3.8'
 
 services:
+  # ==========================================
+  # MySQL Database
+  # ==========================================
   mysql:
-    image: mysql:8.0
+    image: mysql:8.0.36
     container_name: sistema-citas-mysql
+    restart: unless-stopped
+    
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: sistema_citas_neita
-      MYSQL_USER: sistema_citas
-      MYSQL_PASSWORD: sistema_citas_pass
+      MYSQL_USER: neita_user
+      MYSQL_PASSWORD: neita_password_2024
+      TZ: America/Bogota
+    
     ports:
       - "3306:3306"
+    
     volumes:
+      # Persistencia de datos
       - mysql_data:/var/lib/mysql
+      # Script de inicialización
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      # Configuración personalizada
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+    
     networks:
       - sistema-citas-network
+    
+    command: 
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+      - --max_connections=200
+      - --innodb_buffer_pool_size=512M
+      - --innodb_log_file_size=128M
+    
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
 
+  # ==========================================
+  # Spring Boot Application
+  # ==========================================
   app:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - MAVEN_OPTS=-Xmx512m
+    
     container_name: sistema-citas-app
+    restart: unless-stopped
+    
+    environment:
+      # Spring Profile
+      SPRING_PROFILES_ACTIVE: prod
+      
+      # Database Configuration
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/sistema_citas_neita?useSSL=false&serverTimezone=America/Bogota&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      
+      # JPA/Hibernate
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: false
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: true
+      
+      # Server Configuration
+      SERVER_PORT: 8088
+      SERVER_COMPRESSION_ENABLED: true
+      
+      # JWT Configuration
+      JWT_SECRET: neita-barber-shop-secret-key-2024-production-ultra-secure
+      JWT_EXPIRATION: 86400000
+      
+      # Logging
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_COM_NEITA: DEBUG
+      LOGGING_FILE_NAME: /app/logs/application.log
+      
+      # Actuator
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info,metrics,prometheus
+      MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: when_authorized
+      
+      # Timezone
+      TZ: America/Bogota
+      
+      # JVM Options
+      JAVA_OPTS: >-
+        -XX:+UseContainerSupport
+        -XX:MaxRAMPercentage=75.0
+        -XX:InitialRAMPercentage=50.0
+        -XX:+UseG1GC
+        -XX:+UseStringDeduplication
+        -XX:+OptimizeStringConcat
+        -Djava.security.egd=file:/dev/./urandom
+        -Duser.timezone=America/Bogota
+    
+    ports:
+      - "8088:8088"
+    
+    volumes:
+      # Logs persistentes
+      - app_logs:/app/logs
+      # Datos de la aplicación
+      - app_data:/app/data
+    
+    networks:
+      - sistema-citas-network
+    
     depends_on:
       mysql:
         condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/sistema_citas_neita?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=America/Bogota
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SERVER_PORT: 8088
-    ports:
-      - "8088:8088"
-    networks:
-      - sistema-citas-network
-    restart: unless-stopped
+    
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8088/actuator/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8088/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 60s
+      start_period: 90s
 
+  # ==========================================
+  # phpMyAdmin (Opcional - Solo desarrollo)
+  # ==========================================
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.2.1
+    container_name: sistema-citas-phpmyadmin
+    restart: unless-stopped
+    
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+      UPLOAD_LIMIT: 100M
+    
+    ports:
+      - "8080:80"
+    
+    networks:
+      - sistema-citas-network
+    
+    depends_on:
+      mysql:
+        condition: service_healthy
+    
+    profiles:
+      - dev
+
+# ==========================================
+# Networks
+# ==========================================
 networks:
   sistema-citas-network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
 
+# ==========================================
+# Volumes
+# ==========================================
 volumes:
   mysql_data:
+    driver: local
+  
+  app_logs:
+    driver: local
+  
+  app_data:
     driver: local
