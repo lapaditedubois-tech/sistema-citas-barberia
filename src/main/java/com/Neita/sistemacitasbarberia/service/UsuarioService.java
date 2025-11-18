@@ -158,22 +158,9 @@ public class UsuarioService {
         logger.info("Usuario eliminado exitosamente");
     }
 
-    @CacheEvict(value = "usuarios", key = "#id")
-    public void agregarRol(Long id, String rol) {
-        logger.info("Agregando rol {} al usuario con ID: {}", rol, id);
-        
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
-        
-        usuario.agregarRol(rol);
-        usuarioRepository.save(usuario);
-        
-        logger.info("Rol agregado exitosamente");
-    }
+
 
     private UsuarioDTO convertirADTO(Usuario usuario) {
-        UsuarioDTO dto = modelMapper.map(usuario, UsuarioDTO.class);
-        dto.setRoles(usuario.getRoles());
-        return dto;
+        return modelMapper.map(usuario, UsuarioDTO.class);
     }
 }

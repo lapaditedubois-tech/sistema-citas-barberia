@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,12 +45,6 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.obtenerActivos());
     }
 
-    @GetMapping("/rol/{rol}")
-    @Operation(summary = "Obtener usuarios por rol")
-    public ResponseEntity<List<UsuarioDTO>> obtenerPorRol(@PathVariable String rol) {
-        return ResponseEntity.ok(usuarioService.obtenerPorRol(rol));
-    }
-
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar perfil de usuario")
     public ResponseEntity<UsuarioDTO> actualizar(
@@ -88,12 +81,5 @@ public class UsuarioController {
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         usuarioService.eliminar(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/{id}/roles/{rol}")
-    @Operation(summary = "Agregar rol a usuario")
-    public ResponseEntity<Void> agregarRol(@PathVariable Long id, @PathVariable String rol) {
-        usuarioService.agregarRol(id, rol);
-        return ResponseEntity.ok().build();
     }
 }

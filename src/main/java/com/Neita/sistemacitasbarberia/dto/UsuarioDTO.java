@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -32,8 +31,6 @@ public class UsuarioDTO {
     private LocalDateTime fechaRegistro;
 
     private Boolean activo;
-
-    private Set<String> roles;
 
     // DTO para registro (incluye password)
     @Data
