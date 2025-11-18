@@ -58,7 +58,8 @@ public class SecurityConfig {
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                 .requestMatchers("/", "/login", "/registro", "/servicios", "/profesionales", "/galeria", "/productos").permitAll()
                 .requestMatchers("/dashboard", "/mis-citas").permitAll()
-                .requestMatchers("/admin/**").authenticated()
+                .requestMatchers("/admin/dashboard", "/admin/**").permitAll()
+                .requestMatchers("/profesional/dashboard", "/profesional/**").permitAll()
                 
                 // Endpoints de cliente - Permitir con token JWT
                 .requestMatchers("/api/citas/usuario/**").permitAll()

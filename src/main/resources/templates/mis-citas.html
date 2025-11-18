@@ -22,6 +22,13 @@
             color: var(--color-secondary);
         }
         
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
         .tabs {
             display: flex;
             justify-content: center;
@@ -36,6 +43,7 @@
             border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s;
+            font-weight: bold;
         }
         
         .tab.active {
@@ -45,7 +53,7 @@
         }
         
         .citas-list {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
         
@@ -58,6 +66,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .cita-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
         
         .cita-info h3 {
@@ -90,7 +104,7 @@
             gap: 10px;
         }
         
-        .btn-action {
+        .btn {
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
@@ -99,29 +113,48 @@
             transition: all 0.3s;
         }
         
-        .btn-cancelar {
-            background-color: #dc3545;
-            color: #fff;
-        }
-        
-        .btn-editar {
-            background-color: #ffc107;
-            color: #000;
-        }
-        
-        .btn-nueva-cita {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
+        .btn-primary {
             background-color: var(--color-primary);
             color: var(--color-secondary);
-            border: none;
-            border-radius: 50%;
-            font-size: 30px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--color-accent);
+            color: var(--color-light);
+        }
+        
+        .btn-secondary {
+            background-color: var(--color-accent);
+            color: var(--color-light);
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--color-text);
+        }
+        
+        .empty-state p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
         }
         
         .modal {
@@ -142,15 +175,21 @@
             border: 2px solid var(--color-border);
             border-radius: 10px;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
         }
         
         .close {
-            color: #aaa;
+            color: var(--color-text);
             float: right;
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
+        }
+        
+        .close:hover {
+            color: var(--color-primary);
         }
         
         .form-group {
@@ -164,18 +203,83 @@
             font-weight: bold;
         }
         
-        .form-group select, .form-group input {
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 2px solid var(--color-border);
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 14px;
         }
         
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--color-accent);
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+        
+        .barbero-card {
+            background: var(--color-light);
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .barbero-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .barbero-card.selected {
+            border-color: var(--color-primary);
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+        
+        .barbero-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .barbero-nombre {
+            font-weight: bold;
+            color: var(--color-secondary);
+        }
+        
+        .barbero-precio {
+            color: var(--color-primary);
+            font-weight: bold;
         }
     </style>
 </head>
@@ -188,277 +292,479 @@
                     <h1>Neita's</h1>
                     <span>BARBER SHOP</span>
                 </div>
-                <ul class="nav-menu">
+                <ul class="nav-menu" id="navMenu">
                     <li><a href="/">Inicio</a></li>
                     <li><a href="/servicios">Servicios</a></li>
                     <li><a href="/profesionales">Barberos</a></li>
                     <li><a href="/galeria">Galería</a></li>
                     <li><a href="/productos">Productos</a></li>
-                    <li><a href="#" class="btn-registro" onclick="logout()">Cerrar Sesión</a></li>
+                    <li><a href="/mis-citas" class="btn-login">Mis Citas</a></li>
+                    <li><button onclick="logout()" class="logout-btn">Cerrar Sesión</button></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <!-- Citas Page -->
     <section class="citas-page">
         <div class="container">
             <div class="page-header">
                 <h1>Mis Citas</h1>
-                <p id="welcomeMsg">Bienvenido</p>
+                <p id="welcomeMessage">Gestiona tus citas</p>
             </div>
-            
+
+            <!-- Alert -->
+            <div id="alert" class="alert"></div>
+
+            <!-- Header Actions -->
+            <div class="header-actions">
+                <button class="btn btn-success" onclick="abrirModalNuevaCita()">+ Nueva Cita</button>
+            </div>
+
+            <!-- Tabs -->
             <div class="tabs">
                 <div class="tab active" onclick="cambiarTab('proximas')">Próximas</div>
                 <div class="tab" onclick="cambiarTab('historial')">Historial</div>
             </div>
-            
-            <div id="citasList" class="citas-list"></div>
+
+            <!-- Citas Próximas -->
+            <div id="tab-proximas" class="citas-list">
+                <div class="empty-state">
+                    <p>Cargando citas...</p>
+                </div>
+            </div>
+
+            <!-- Historial -->
+            <div id="tab-historial" class="citas-list" style="display: none;">
+                <div class="empty-state">
+                    <p>Cargando historial...</p>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- Botón para nueva cita -->
-    <button class="btn-nueva-cita" onclick="openModal()">+</button>
-
-    <!-- Modal para crear cita -->
-    <div id="citaModal" class="modal">
+    <!-- Modal Nueva/Editar Cita -->
+    <div id="modalCita" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Agendar Nueva Cita</h2>
-            <form id="citaForm">
+            <span class="close" onclick="cerrarModalCita()">&times;</span>
+            <h2 id="tituloModal">Nueva Cita</h2>
+            <form id="formCita">
+                <input type="hidden" id="citaId">
+                
                 <div class="form-group">
-                    <label for="servicio">Servicio</label>
-                    <select id="servicio" required onchange="cargarProfesionalesPorServicio()">
-                        <option value="">Selecciona un servicio</option>
+                    <label for="servicioSelect">Servicio *</label>
+                    <select id="servicioSelect" required onchange="cargarBarberosPorServicio()">
+                        <option value="">Seleccione un servicio</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="profesional">Barbero</label>
-                    <select id="profesional" required>
-                        <option value="">Primero selecciona un servicio</option>
-                    </select>
+                
+                <div class="form-group" id="barberosContainer" style="display: none;">
+                    <label>Seleccione un Barbero *</label>
+                    <div id="barberosList"></div>
                 </div>
+                
                 <div class="form-group">
-                    <label for="fecha">Fecha</label>
-                    <input type="date" id="fecha" required>
+                    <label for="fechaHora">Fecha y Hora *</label>
+                    <input type="datetime-local" id="fechaHora" required>
                 </div>
-                <div class="form-group">
-                    <label for="hora">Hora</label>
-                    <input type="time" id="hora" required min="09:00" max="20:00">
+                
+                <div class="btn-group" style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalCita()">Cancelar</button>
                 </div>
-                <button type="submit" class="btn-action" style="width:100%; background-color: var(--color-primary); color: var(--color-secondary);">
-                    Agendar Cita
-                </button>
             </form>
         </div>
     </div>
 
     <script th:src="@{/js/main.js}"></script>
     <script>
-        let usuario = null;
-        let tabActual = 'proximas';
-        
+        let usuarioData = null;
+        let citasProximas = [];
+        let citasHistorial = [];
+        let barberoSeleccionado = null;
+
+        // Verificar autenticación
         window.addEventListener('DOMContentLoaded', () => {
-            const usuarioData = localStorage.getItem('usuario');
-            if (!usuarioData) {
+            const usuarioStr = localStorage.getItem('usuario');
+            if (!usuarioStr) {
                 window.location.href = '/login';
                 return;
             }
+
+            usuarioData = JSON.parse(usuarioStr);
+            document.getElementById('welcomeMessage').textContent = `Bienvenido, ${usuarioData.nombre}`;
             
-            usuario = JSON.parse(usuarioData);
-            document.getElementById('welcomeMsg').textContent = `Bienvenido, ${usuario.nombre}`;
-            
-            // Configurar fecha mínima (hoy)
-            const hoy = new Date().toISOString().split('T')[0];
-            document.getElementById('fecha').min = hoy;
-            
-            cargarServicios();
-            cargarCitas();
-            
-            // Verificar si viene con parámetros de profesional/servicio
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('profesional')) {
-                openModal();
-                if (urlParams.has('servicio')) {
-                    document.getElementById('servicio').value = urlParams.get('servicio');
-                    cargarProfesionalesPorServicio();
-                    setTimeout(() => {
-                        document.getElementById('profesional').value = urlParams.get('profesional');
-                    }, 500);
-                }
-            }
+            cargarDatos();
         });
-        
+
+        async function cargarDatos() {
+            await Promise.all([
+                cargarCitasProximas(),
+                cargarCitasHistorial(),
+                cargarServicios()
+            ]);
+        }
+
+        async function cargarCitasProximas() {
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`http://localhost:8088/api/citas/usuario/${usuarioData.usuarioId}/proximas`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    citasProximas = await response.json();
+                    mostrarCitasProximas();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function cargarCitasHistorial() {
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`http://localhost:8088/api/citas/usuario/${usuarioData.usuarioId}/historial`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    citasHistorial = await response.json();
+                    mostrarCitasHistorial();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function mostrarCitasProximas() {
+            const container = document.getElementById('tab-proximas');
+            
+            if (citasProximas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No tienes citas próximas</p>
+                        <button class="btn btn-primary" onclick="abrirModalNuevaCita()">Agendar Primera Cita</button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            citasProximas.forEach(cita => {
+                const fecha = new Date(cita.fechaHora);
+                const estadoClass = `estado-${cita.estado.toLowerCase()}`;
+                const puedeEditar = cita.estado === 'PENDIENTE';
+                
+                html += `
+                    <div class="cita-card">
+                        <div class="cita-info">
+                            <h3>${cita.servicioNombre}</h3>
+                            <div class="cita-details">
+                                <p><strong>Barbero:</strong> ${cita.profesionalNombre}</p>
+                                <p><strong>Fecha:</strong> ${fecha.toLocaleDateString('es-CO')}</p>
+                                <p><strong>Hora:</strong> ${fecha.toLocaleTimeString('es-CO', {hour: '2-digit', minute: '2-digit'})}</p>
+                                <span class="cita-estado ${estadoClass}">${cita.estado}</span>
+                            </div>
+                        </div>
+                        <div class="cita-actions">
+                            ${puedeEditar ? `<button class="btn btn-secondary" onclick="editarCita(${cita.id})">Editar</button>` : ''}
+                            ${puedeEditar ? `<button class="btn btn-danger" onclick="cancelarCita(${cita.id})">Cancelar</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function mostrarCitasHistorial() {
+            const container = document.getElementById('tab-historial');
+            
+            if (citasHistorial.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No tienes citas en el historial</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            citasHistorial.forEach(cita => {
+                const fecha = new Date(cita.fechaHora);
+                const estadoClass = `estado-${cita.estado.toLowerCase()}`;
+                
+                html += `
+                    <div class="cita-card">
+                        <div class="cita-info">
+                            <h3>${cita.servicioNombre}</h3>
+                            <div class="cita-details">
+                                <p><strong>Barbero:</strong> ${cita.profesionalNombre}</p>
+                                <p><strong>Fecha:</strong> ${fecha.toLocaleDateString('es-CO')}</p>
+                                <p><strong>Hora:</strong> ${fecha.toLocaleTimeString('es-CO', {hour: '2-digit', minute: '2-digit'})}</p>
+                                <span class="cita-estado ${estadoClass}">${cita.estado}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function cambiarTab(tab) {
+            // Ocultar todos los tabs
+            document.getElementById('tab-proximas').style.display = 'none';
+            document.getElementById('tab-historial').style.display = 'none';
+            
+            // Remover clase active de todos los tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            
+            // Mostrar tab seleccionado
+            if (tab === 'proximas') {
+                document.getElementById('tab-proximas').style.display = 'block';
+                event.target.classList.add('active');
+            } else {
+                document.getElementById('tab-historial').style.display = 'block';
+                event.target.classList.add('active');
+            }
+        }
+
         async function cargarServicios() {
             try {
                 const response = await fetch('http://localhost:8088/api/servicios/activos');
-                const servicios = await response.json();
-                
-                const select = document.getElementById('servicio');
-                servicios.forEach(servicio => {
-                    const option = document.createElement('option');
-                    option.value = servicio.id;
-                    option.textContent = `${servicio.nombre} - $${servicio.precio.toLocaleString('es-CO')}`;
-                    select.appendChild(option);
-                });
+                if (response.ok) {
+                    const servicios = await response.json();
+                    const select = document.getElementById('servicioSelect');
+                    select.innerHTML = '<option value="">Seleccione un servicio</option>';
+                    servicios.forEach(servicio => {
+                        select.innerHTML += `<option value="${servicio.id}">${servicio.nombre} - ${servicio.duracion} - $${servicio.precio.toLocaleString('es-CO')}</option>`;
+                    });
+                }
             } catch (error) {
-                console.error('Error cargando servicios:', error);
+                console.error('Error:', error);
             }
         }
-        
-        async function cargarProfesionalesPorServicio() {
-            const servicioId = document.getElementById('servicio').value;
-            if (!servicioId) return;
+
+        async function cargarBarberosPorServicio() {
+            const servicioId = document.getElementById('servicioSelect').value;
             
+            if (!servicioId) {
+                document.getElementById('barberosContainer').style.display = 'none';
+                return;
+            }
+
             try {
-                const response = await fetch(`http://localhost:8088/api/profesionales/servicio/${servicioId}`);
-                const profesionales = await response.json();
-                
-                const select = document.getElementById('profesional');
-                select.innerHTML = '<option value="">Selecciona un barbero</option>';
-                
-                profesionales.forEach(prof => {
-                    const option = document.createElement('option');
-                    option.value = prof.id;
-                    option.textContent = `${prof.usuarioNombre || 'Barbero'} - ${prof.especialidad}`;
-                    select.appendChild(option);
-                });
+                const response = await fetch(`http://localhost:8088/api/barbero-servicios/servicio/${servicioId}/disponibles`);
+                if (response.ok) {
+                    const barberos = await response.json();
+                    mostrarBarberos(barberos);
+                }
             } catch (error) {
-                console.error('Error cargando profesionales:', error);
+                console.error('Error:', error);
             }
         }
-        
-        async function cargarCitas() {
+
+        function mostrarBarberos(barberos) {
+            const container = document.getElementById('barberosList');
+            
+            if (barberos.length === 0) {
+                container.innerHTML = '<p>No hay barberos disponibles para este servicio</p>';
+                document.getElementById('barberosContainer').style.display = 'block';
+                return;
+            }
+
+            let html = '';
+            barberos.forEach(barbero => {
+                html += `
+                    <div class="barbero-card" onclick="seleccionarBarbero(${barbero.profesionalId}, ${barbero.id}, this)">
+                        <div class="barbero-info">
+                            <div>
+                                <div class="barbero-nombre">${barbero.profesionalNombre}</div>
+                                <small>${barbero.profesionalEspecialidad}</small>
+                            </div>
+                            <div class="barbero-precio">$${barbero.precioPersonalizado.toLocaleString('es-CO')}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            document.getElementById('barberosContainer').style.display = 'block';
+        }
+
+        function seleccionarBarbero(profesionalId, barberoServicioId, element) {
+            // Remover selección anterior
+            document.querySelectorAll('.barbero-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Marcar como seleccionado
+            element.classList.add('selected');
+            barberoSeleccionado = { profesionalId, barberoServicioId };
+        }
+
+        function abrirModalNuevaCita() {
+            document.getElementById('tituloModal').textContent = 'Nueva Cita';
+            document.getElementById('formCita').reset();
+            document.getElementById('citaId').value = '';
+            document.getElementById('barberosContainer').style.display = 'none';
+            barberoSeleccionado = null;
+            
+            // Establecer fecha mínima (hoy)
+            const ahora = new Date();
+            ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset());
+            document.getElementById('fechaHora').min = ahora.toISOString().slice(0, 16);
+            
+            document.getElementById('modalCita').style.display = 'block';
+        }
+
+        function cerrarModalCita() {
+            document.getElementById('modalCita').style.display = 'none';
+        }
+
+        async function editarCita(citaId) {
             try {
                 const token = localStorage.getItem('authToken');
-                const endpoint = tabActual === 'proximas' 
-                    ? `http://localhost:8088/api/citas/usuario/${usuario.usuarioId}/proximas`
-                    : `http://localhost:8088/api/citas/usuario/${usuario.usuarioId}/historial`;
-                
-                const response = await fetch(endpoint, {
+                const response = await fetch(`http://localhost:8088/api/citas/${citaId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                
-                const citas = await response.json();
-                mostrarCitas(citas);
+
+                if (response.ok) {
+                    const cita = await response.json();
+                    document.getElementById('tituloModal').textContent = 'Editar Cita';
+                    document.getElementById('citaId').value = cita.id;
+                    document.getElementById('servicioSelect').value = cita.servicioId;
+                    
+                    // Cargar barberos del servicio
+                    await cargarBarberosPorServicio();
+                    
+                    // Seleccionar barbero actual
+                    barberoSeleccionado = { 
+                        profesionalId: cita.profesionalId,
+                        barberoServicioId: cita.barberoServicioId 
+                    };
+                    
+                    // Marcar barbero seleccionado
+                    setTimeout(() => {
+                        const barberoCards = document.querySelectorAll('.barbero-card');
+                        barberoCards.forEach(card => {
+                            if (card.onclick.toString().includes(cita.profesionalId)) {
+                                card.classList.add('selected');
+                            }
+                        });
+                    }, 100);
+                    
+                    // Establecer fecha
+                    const fecha = new Date(cita.fechaHora);
+                    fecha.setMinutes(fecha.getMinutes() - fecha.getTimezoneOffset());
+                    document.getElementById('fechaHora').value = fecha.toISOString().slice(0, 16);
+                    
+                    document.getElementById('modalCita').style.display = 'block';
+                }
             } catch (error) {
-                console.error('Error cargando citas:', error);
-                document.getElementById('citasList').innerHTML = 
-                    '<div class="empty-state">Error al cargar las citas</div>';
+                console.error('Error:', error);
+                showAlert('Error al cargar cita', 'error');
             }
         }
-        
-        function mostrarCitas(citas) {
-            const lista = document.getElementById('citasList');
+
+        document.getElementById('formCita').addEventListener('submit', async (e) => {
+            e.preventDefault();
             
-            if (citas.length === 0) {
-                lista.innerHTML = '<div class="empty-state">No tienes citas ' + 
-                    (tabActual === 'proximas' ? 'programadas' : 'en tu historial') + '</div>';
+            if (!barberoSeleccionado) {
+                showAlert('Por favor seleccione un barbero', 'error');
                 return;
             }
             
-            lista.innerHTML = '';
-            citas.forEach(cita => {
-                const card = document.createElement('div');
-                card.className = 'cita-card';
-                card.innerHTML = `
-                    <div class="cita-info">
-                        <h3>${cita.servicioNombre || 'Servicio'}</h3>
-                        <div class="cita-details">
-                            👤 Barbero: ${cita.profesionalNombre || 'N/A'}<br>
-                            📅 Fecha: ${new Date(cita.fechaHora).toLocaleDateString('es-CO')}<br>
-                            🕐 Hora: ${new Date(cita.fechaHora).toLocaleTimeString('es-CO', {hour: '2-digit', minute: '2-digit'})}
-                        </div>
-                        <span class="cita-estado estado-${cita.estado.toLowerCase()}">${cita.estado}</span>
-                    </div>
-                    <div class="cita-actions">
-                        ${cita.estado === 'PENDIENTE' || cita.estado === 'CONFIRMADA' ? 
-                            `<button class="btn-action btn-cancelar" onclick="cancelarCita(${cita.id})">Cancelar</button>` : ''}
-                    </div>
-                `;
-                lista.appendChild(card);
-            });
-        }
-        
-        function cambiarTab(tab) {
-            tabActual = tab;
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            cargarCitas();
-        }
-        
-        function openModal() {
-            document.getElementById('citaModal').style.display = 'block';
-        }
-        
-        function closeModal() {
-            document.getElementById('citaModal').style.display = 'none';
-        }
-        
-        document.getElementById('citaForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+            const citaId = document.getElementById('citaId').value;
+            const servicioId = parseInt(document.getElementById('servicioSelect').value);
+            const fechaHora = document.getElementById('fechaHora').value;
             
-            const fecha = document.getElementById('fecha').value;
-            const hora = document.getElementById('hora').value;
-            const fechaHora = `${fecha}T${hora}:00`;
-            
-            const cita = {
-                usuarioId: usuario.usuarioId,
-                profesionalId: parseInt(document.getElementById('profesional').value),
-                servicioId: parseInt(document.getElementById('servicio').value),
+            const data = {
+                usuarioId: usuarioData.usuarioId,
+                profesionalId: barberoSeleccionado.profesionalId,
+                servicioId: servicioId,
                 fechaHora: fechaHora,
                 estado: 'PENDIENTE'
             };
-            
+
             try {
                 const token = localStorage.getItem('authToken');
-                const response = await fetch('http://localhost:8088/api/citas', {
-                    method: 'POST',
+                const url = citaId 
+                    ? `http://localhost:8088/api/citas/${citaId}`
+                    : 'http://localhost:8088/api/citas';
+                
+                const method = citaId ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: method,
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify(cita)
+                    body: JSON.stringify(data)
                 });
-                
+
                 if (response.ok) {
-                    alert('¡Cita agendada exitosamente!');
-                    closeModal();
-                    cargarCitas();
+                    showAlert(citaId ? 'Cita actualizada exitosamente' : 'Cita creada exitosamente', 'success');
+                    cerrarModalCita();
+                    cargarCitasProximas();
                 } else {
                     const error = await response.json();
-                    alert('Error: ' + (error.message || 'No se pudo agendar la cita'));
+                    showAlert(error.message || 'Error al guardar cita', 'error');
                 }
             } catch (error) {
-                alert('Error de conexión');
+                console.error('Error:', error);
+                showAlert('Error de conexión', 'error');
             }
         });
-        
-        async function cancelarCita(id) {
+
+        async function cancelarCita(citaId) {
             if (!confirm('¿Estás seguro de cancelar esta cita?')) return;
-            
+
             try {
                 const token = localStorage.getItem('authToken');
-                const response = await fetch(`http://localhost:8088/api/citas/${id}/cancelar`, {
+                const response = await fetch(`http://localhost:8088/api/citas/${citaId}/cancelar`, {
                     method: 'PUT',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                
+
                 if (response.ok) {
-                    alert('Cita cancelada');
-                    cargarCitas();
+                    showAlert('Cita cancelada exitosamente', 'success');
+                    cargarCitasProximas();
+                    cargarCitasHistorial();
                 } else {
-                    alert('Error al cancelar la cita');
+                    showAlert('Error al cancelar cita', 'error');
                 }
             } catch (error) {
-                alert('Error de conexión');
+                console.error('Error:', error);
+                showAlert('Error de conexión', 'error');
             }
         }
-        
+
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alert');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            alertDiv.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 5000);
+        }
+
         function logout() {
             localStorage.removeItem('authToken');
             localStorage.removeItem('usuario');
-            window.location.href = '/';
+            window.location.href = '/login';
+        }
+
+        // Cerrar modal al hacer click fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalCita');
+            if (event.target == modal) {
+                cerrarModalCita();
+            }
         }
     </script>
 </body>

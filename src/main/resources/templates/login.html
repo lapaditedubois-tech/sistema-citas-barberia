@@ -192,9 +192,9 @@
                     // Redirigir según el rol
                     setTimeout(() => {
                         if (data.roles.includes('ADMIN')) {
-                            window.location.href = '/dashboard';
+                            window.location.href = '/admin/dashboard';
                         } else if (data.roles.includes('PROFESIONAL')) {
-                            window.location.href = '/dashboard';
+                            window.location.href = '/profesional/dashboard';
                         } else {
                             window.location.href = '/mis-citas';
                         }
