@@ -45,14 +45,12 @@ public class CitaController {
     }
 
     @GetMapping("/usuario/{usuarioId}/proximas")
-    @PreAuthorize("hasRole('ADMIN') or @usuarioSecurity.esUsuarioActual(#usuarioId)")
     @Operation(summary = "Obtener próximas citas de un usuario")
     public ResponseEntity<List<CitaDTO>> obtenerProximasPorUsuario(@PathVariable Long usuarioId) {
         return ResponseEntity.ok(citaService.obtenerProximasPorUsuario(usuarioId));
     }
 
     @GetMapping("/usuario/{usuarioId}/historial")
-    @PreAuthorize("hasRole('ADMIN') or @usuarioSecurity.esUsuarioActual(#usuarioId)")
     @Operation(summary = "Obtener historial de citas de un usuario")
     public ResponseEntity<List<CitaDTO>> obtenerHistorialPorUsuario(@PathVariable Long usuarioId) {
         return ResponseEntity.ok(citaService.obtenerHistorialPorUsuario(usuarioId));
@@ -73,7 +71,6 @@ public class CitaController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN')")
     @Operation(summary = "Crear nueva cita")
     public ResponseEntity<CitaDTO> crear(@Valid @RequestBody CitaDTO.CrearCitaDTO crearDTO) {
         CitaDTO citaCreada = citaService.crear(crearDTO);
@@ -99,7 +96,6 @@ public class CitaController {
     }
 
     @PutMapping("/{id}/cancelar")
-    @PreAuthorize("hasRole('ADMIN') or @citaSecurity.esPropietarioCita(#id)")
     @Operation(summary = "Cancelar cita")
     public ResponseEntity<Void> cancelar(@PathVariable Long id) {
         citaService.cancelar(id);

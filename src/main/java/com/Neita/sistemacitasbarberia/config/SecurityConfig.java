@@ -52,17 +52,18 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/profesionales/**").permitAll()
                 
                 // Swagger/OpenAPI
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html").permitAll()
                 
                 // Recursos estáticos y vistas Thymeleaf - TODAS PÚBLICAS
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                 .requestMatchers("/", "/login", "/registro", "/servicios", "/profesionales", "/galeria", "/productos").permitAll()
-                .requestMatchers("/dashboard", "/mis-citas", "/admin/**").authenticated()
+                .requestMatchers("/dashboard", "/mis-citas").permitAll()
+                .requestMatchers("/admin/**").authenticated()
                 
-                // Endpoints de cliente
-                .requestMatchers("/api/citas/usuario/**").hasAnyRole("CLIENTE", "ADMIN")
-                .requestMatchers(HttpMethod.POST, "/api/citas").hasAnyRole("CLIENTE", "ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/citas/{id}").hasAnyRole("CLIENTE", "ADMIN")
+                // Endpoints de cliente - Permitir con token JWT
+                .requestMatchers("/api/citas/usuario/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/citas").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/citas/*/cancelar").permitAll()
                 
                 // Endpoints de profesional
                 .requestMatchers("/api/citas/profesional/**").hasAnyRole("PROFESIONAL", "ADMIN")
