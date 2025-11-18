@@ -46,16 +46,6 @@ public class WebController {
         return "dashboard";
     }
 
-    @GetMapping("/admin/dashboard")
-    public String adminDashboard() {
-        return "admin-dashboard";
-    }
-
-    @GetMapping("/profesional/dashboard")
-    public String profesionalDashboard() {
-        return "profesional-dashboard";
-    }
-
     @GetMapping("/mis-citas")
     public String misCitas() {
         return "mis-citas";

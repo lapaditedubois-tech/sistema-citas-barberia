@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,7 +64,6 @@ public class ProfesionalController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESIONAL')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Crear nuevo profesional")
     public ResponseEntity<ProfesionalDTO> crear(@Valid @RequestBody ProfesionalDTO.CrearProfesionalDTO crearDTO) {
@@ -74,7 +72,6 @@ public class ProfesionalController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @profesionalSecurity.esProfesionalActual(#id)")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Actualizar profesional")
     public ResponseEntity<ProfesionalDTO> actualizar(
@@ -84,7 +81,6 @@ public class ProfesionalController {
     }
 
     @PutMapping("/{id}/desactivar")
-    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Desactivar profesional")
     public ResponseEntity<Void> desactivar(@PathVariable Long id) {
@@ -93,7 +89,6 @@ public class ProfesionalController {
     }
 
     @PutMapping("/{id}/activar")
-    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Activar profesional")
     public ResponseEntity<Void> activar(@PathVariable Long id) {
@@ -102,7 +97,6 @@ public class ProfesionalController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Eliminar profesional")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {

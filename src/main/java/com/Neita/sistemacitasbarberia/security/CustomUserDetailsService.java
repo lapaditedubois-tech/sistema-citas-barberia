@@ -3,7 +3,6 @@ package com.Neita.sistemacitasbarberia.security;
 import com.Neita.sistemacitasbarberia.entity.Usuario;
 import com.Neita.sistemacitasbarberia.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,8 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -31,20 +29,15 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Usuario desactivado: " + email);
         }
 
+        // Todos los usuarios tienen el mismo authority "USER"
         return User.builder()
                 .username(usuario.getEmail())
                 .password(usuario.getPassword())
-                .authorities(mapearRoles(usuario.getRoles()))
+                .authorities(Collections.singletonList(new SimpleGrantedAuthority("USER")))
                 .accountExpired(false)
                 .accountLocked(false)
                 .credentialsExpired(false)
                 .disabled(!usuario.getActivo())
                 .build();
-    }
-
-    private Collection<? extends GrantedAuthority> mapearRoles(Collection<String> roles) {
-        return roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
     }
 }

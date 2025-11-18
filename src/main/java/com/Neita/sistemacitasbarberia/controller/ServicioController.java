@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,7 +52,6 @@ public class ServicioController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESIONAL')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Crear nuevo servicio")
     public ResponseEntity<ServicioDTO> crear(@Valid @RequestBody ServicioDTO servicioDTO) {
@@ -62,7 +60,6 @@ public class ServicioController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESIONAL')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Actualizar servicio")
     public ResponseEntity<ServicioDTO> actualizar(
@@ -72,7 +69,6 @@ public class ServicioController {
     }
 
     @PutMapping("/{id}/desactivar")
-    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Desactivar servicio")
     public ResponseEntity<Void> desactivar(@PathVariable Long id) {
@@ -81,7 +77,6 @@ public class ServicioController {
     }
 
     @PutMapping("/{id}/activar")
-    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Activar servicio")
     public ResponseEntity<Void> activar(@PathVariable Long id) {
@@ -90,7 +85,6 @@ public class ServicioController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Eliminar servicio")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {

@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,7 +34,6 @@ public class ProductoController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Obtener todos los productos")
     public ResponseEntity<List<ProductoDTO>> obtenerTodos() {
@@ -61,7 +59,6 @@ public class ProductoController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Crear nuevo producto")
     public ResponseEntity<ProductoDTO> crear(@Valid @RequestBody ProductoDTO.CrearProductoDTO crearDTO) {
@@ -70,7 +67,6 @@ public class ProductoController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Actualizar producto")
     public ResponseEntity<ProductoDTO> actualizar(
@@ -80,7 +76,6 @@ public class ProductoController {
     }
 
     @PutMapping("/{id}/stock")
-    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Actualizar stock de producto")
     public ResponseEntity<ProductoDTO> actualizarStock(
@@ -90,7 +85,6 @@ public class ProductoController {
     }
 
     @PutMapping("/{id}/disponibilidad")
-    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Cambiar disponibilidad de producto")
     public ResponseEntity<Void> cambiarDisponibilidad(
@@ -101,7 +95,6 @@ public class ProductoController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Eliminar producto")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {

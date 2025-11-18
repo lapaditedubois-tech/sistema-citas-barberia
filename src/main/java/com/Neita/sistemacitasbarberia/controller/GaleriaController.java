@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,7 +46,6 @@ public class GaleriaController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('PROFESIONAL', 'ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Crear entrada de galería")
     public ResponseEntity<GaleriaDTO> crear(@Valid @RequestBody GaleriaDTO.CrearGaleriaDTO crearDTO) {
@@ -56,7 +54,6 @@ public class GaleriaController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('PROFESIONAL', 'ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Actualizar entrada de galería")
     public ResponseEntity<GaleriaDTO> actualizar(
@@ -66,7 +63,6 @@ public class GaleriaController {
     }
 
     @PutMapping("/{id}/visibilidad")
-    @PreAuthorize("hasAnyRole('PROFESIONAL', 'ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Cambiar visibilidad de entrada de galería")
     public ResponseEntity<Void> cambiarVisibilidad(
@@ -77,7 +73,6 @@ public class GaleriaController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('PROFESIONAL', 'ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Eliminar entrada de galería")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {

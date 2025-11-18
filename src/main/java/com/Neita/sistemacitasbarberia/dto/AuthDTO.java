@@ -24,7 +24,7 @@ public class AuthDTO {
         private String password;
     }
 
-    // DTO para respuesta de autenticación
+    // DTO para respuesta de autenticación (sin roles)
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -35,6 +35,5 @@ public class AuthDTO {
         private Long usuarioId;
         private String nombre;
         private String email;
-        private String[] roles;
     }
 }

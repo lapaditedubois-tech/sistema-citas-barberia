@@ -63,13 +63,7 @@ public class UsuarioService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public List<UsuarioDTO> obtenerPorRol(String rol) {
-        logger.debug("Obteniendo usuarios con rol: {}", rol);
-        return usuarioRepository.findByRol(rol).stream()
-                .map(this::convertirADTO)
-                .collect(Collectors.toList());
-    }
+
 
     @CacheEvict(value = "usuarios", allEntries = true)
     public UsuarioDTO registrar(UsuarioDTO.RegistroDTO registroDTO) {
@@ -86,8 +80,6 @@ public class UsuarioService {
                 .telefono(registroDTO.getTelefono())
                 .activo(true)
                 .build();
-        
-        usuario.agregarRol("ROLE_CLIENTE");
         
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
         logger.info("Usuario registrado exitosamente con ID: {}", usuarioGuardado.getId());

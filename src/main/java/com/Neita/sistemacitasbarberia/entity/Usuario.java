@@ -38,13 +38,8 @@ public class Usuario {
     private LocalDateTime fechaRegistro;
 
     @Column(nullable = false)
-    private Boolean activo = true;
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "usuario_roles", joinColumns = @JoinColumn(name = "usuario_id"))
-    @Column(name = "rol")
     @Builder.Default
-    private Set<String> roles = new HashSet<>();
+    private Boolean activo = true;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -52,17 +47,4 @@ public class Usuario {
 
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private Profesional profesional;
-
-    // Método helper para agregar roles
-    public void agregarRol(String rol) {
-        if (this.roles == null) {
-            this.roles = new HashSet<>();
-        }
-        this.roles.add(rol);
-    }
-
-    // Método helper para verificar si tiene un rol específico
-    public boolean tieneRol(String rol) {
-        return this.roles != null && this.roles.contains(rol);
-    }
 }

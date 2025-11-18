@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,7 +34,6 @@ public class ValoracionController {
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    @PreAuthorize("hasRole('ADMIN') or @usuarioSecurity.esUsuarioActual(#usuarioId)")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Obtener valoraciones de un usuario")
     public ResponseEntity<List<ValoracionDTO>> obtenerPorUsuario(@PathVariable Long usuarioId) {
@@ -43,7 +41,6 @@ public class ValoracionController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Crear nueva valoración")
     public ResponseEntity<ValoracionDTO> crear(@Valid @RequestBody ValoracionDTO.CrearValoracionDTO crearDTO) {
@@ -52,7 +49,6 @@ public class ValoracionController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @valoracionSecurity.esPropietarioValoracion(#id)")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Actualizar valoración")
     public ResponseEntity<ValoracionDTO> actualizar(
@@ -62,7 +58,6 @@ public class ValoracionController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @valoracionSecurity.esPropietarioValoracion(#id)")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Eliminar valoración")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {

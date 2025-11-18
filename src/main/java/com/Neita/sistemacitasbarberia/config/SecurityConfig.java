@@ -5,12 +5,10 @@ import com.Neita.sistemacitasbarberia.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,7 +26,6 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -41,41 +38,23 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                // Endpoints públicos
+                // Endpoints de autenticación
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/servicios/**").permitAll()
-                .requestMatchers("/api/profesionales/activos").permitAll()
-                .requestMatchers("/api/profesionales/servicio/**").permitAll()
-                .requestMatchers("/api/valoraciones/profesional/**").permitAll()
-                .requestMatchers("/api/galeria/visibles/**").permitAll()
-                .requestMatchers("/api/productos/disponibles", "/api/productos/en-stock").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/profesionales/**").permitAll()
                 
                 // Swagger/OpenAPI
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html").permitAll()
                 
-                // Recursos estáticos y vistas Thymeleaf - TODAS PÚBLICAS
+                // Recursos estáticos
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
-                .requestMatchers("/", "/login", "/registro", "/servicios", "/profesionales", "/galeria", "/productos").permitAll()
-                .requestMatchers("/dashboard", "/mis-citas").permitAll()
-                .requestMatchers("/admin/dashboard", "/admin/**").permitAll()
-                .requestMatchers("/profesional/dashboard", "/profesional/**").permitAll()
                 
-                // Endpoints de cliente - Permitir con token JWT
-                .requestMatchers("/api/citas/usuario/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/citas").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/api/citas/*/cancelar").permitAll()
+                // Vistas públicas
+                .requestMatchers("/", "/login", "/registro").permitAll()
                 
-                // Endpoints de profesional
-                .requestMatchers("/api/citas/profesional/**").hasAnyRole("PROFESIONAL", "ADMIN")
-                .requestMatchers("/api/barbero-servicios/**").hasAnyRole("PROFESIONAL", "ADMIN")
-                .requestMatchers("/api/galeria/profesional/**").hasAnyRole("PROFESIONAL", "ADMIN")
-                .requestMatchers(HttpMethod.POST, "/api/galeria").hasAnyRole("PROFESIONAL", "ADMIN")
+                // Dashboard (requiere autenticación)
+                .requestMatchers("/dashboard", "/dashboard/**").permitAll()
                 
-                // Endpoints de administrador
-                .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN")
-                .requestMatchers("/api/productos/**").hasRole("ADMIN")
+                // API endpoints (todos permitidos para usuarios autenticados)
+                .requestMatchers("/api/**").permitAll()
                 
                 // Cualquier otra petición requiere autenticación
                 .anyRequest().authenticated()
@@ -110,7 +89,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173", "http://localhost:8088"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

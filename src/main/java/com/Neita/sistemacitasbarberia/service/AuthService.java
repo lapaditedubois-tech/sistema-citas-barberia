@@ -45,8 +45,6 @@ public class AuthService {
         Usuario usuario = usuarioRepository.findByEmail(loginDTO.getEmail())
                 .orElseThrow();
         
-        String[] roles = usuario.getRoles().toArray(new String[0]);
-        
         logger.info("Login exitoso para usuario: {}", loginDTO.getEmail());
         
         return AuthDTO.AuthResponseDTO.builder()
@@ -55,7 +53,6 @@ public class AuthService {
                 .usuarioId(usuario.getId())
                 .nombre(usuario.getNombre())
                 .email(usuario.getEmail())
-                .roles(roles)
                 .build();
     }
 
@@ -70,8 +67,6 @@ public class AuthService {
         Usuario usuario = usuarioRepository.findByEmail(registroDTO.getEmail())
                 .orElseThrow();
         
-        String[] roles = usuario.getRoles().toArray(new String[0]);
-        
         logger.info("Registro exitoso para usuario: {}", registroDTO.getEmail());
         
         return AuthDTO.AuthResponseDTO.builder()
@@ -80,7 +75,6 @@ public class AuthService {
                 .usuarioId(usuario.getId())
                 .nombre(usuario.getNombre())
                 .email(usuario.getEmail())
-                .roles(roles)
                 .build();
     }
 }

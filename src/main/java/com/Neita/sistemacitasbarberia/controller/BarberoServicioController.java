@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,7 +47,6 @@ public class BarberoServicioController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESIONAL')")
     @Operation(summary = "Crear relación barbero-servicio")
     public ResponseEntity<BarberoServicioDTO> crear(
             @Valid @RequestBody BarberoServicioDTO.CrearBarberoServicioDTO crearDTO) {
@@ -57,7 +55,6 @@ public class BarberoServicioController {
     }
 
     @PutMapping("/{id}/precio")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESIONAL')")
     @Operation(summary = "Actualizar precio del servicio")
     public ResponseEntity<BarberoServicioDTO> actualizarPrecio(
             @PathVariable Long id,
@@ -66,7 +63,6 @@ public class BarberoServicioController {
     }
 
     @PutMapping("/{id}/disponibilidad")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESIONAL')")
     @Operation(summary = "Cambiar disponibilidad del servicio")
     public ResponseEntity<Void> cambiarDisponibilidad(
             @PathVariable Long id,
@@ -76,7 +72,6 @@ public class BarberoServicioController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESIONAL')")
     @Operation(summary = "Eliminar relación barbero-servicio")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         barberoServicioService.eliminar(id);

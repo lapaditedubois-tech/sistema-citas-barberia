@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,21 +23,18 @@ public class CitaController {
     private final CitaService citaService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Obtener todas las citas")
     public ResponseEntity<List<CitaDTO>> obtenerTodas() {
         return ResponseEntity.ok(citaService.obtenerTodas());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @citaSecurity.esPropietarioCita(#id)")
     @Operation(summary = "Obtener cita por ID")
     public ResponseEntity<CitaDTO> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(citaService.obtenerPorId(id));
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    @PreAuthorize("hasRole('ADMIN') or @usuarioSecurity.esUsuarioActual(#usuarioId)")
     @Operation(summary = "Obtener citas de un usuario")
     public ResponseEntity<List<CitaDTO>> obtenerPorUsuario(@PathVariable Long usuarioId) {
         return ResponseEntity.ok(citaService.obtenerPorUsuario(usuarioId));
@@ -57,14 +53,12 @@ public class CitaController {
     }
 
     @GetMapping("/profesional/{profesionalId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESIONAL')")
     @Operation(summary = "Obtener citas de un profesional")
     public ResponseEntity<List<CitaDTO>> obtenerPorProfesional(@PathVariable Long profesionalId) {
         return ResponseEntity.ok(citaService.obtenerPorProfesional(profesionalId));
     }
 
     @GetMapping("/profesional/{profesionalId}/proximas")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESIONAL')")
     @Operation(summary = "Obtener próximas citas de un profesional")
     public ResponseEntity<List<CitaDTO>> obtenerProximasPorProfesional(@PathVariable Long profesionalId) {
         return ResponseEntity.ok(citaService.obtenerProximasPorProfesional(profesionalId));
@@ -78,7 +72,6 @@ public class CitaController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @citaSecurity.esPropietarioCita(#id)")
     @Operation(summary = "Actualizar cita")
     public ResponseEntity<CitaDTO> actualizar(
             @PathVariable Long id,
@@ -87,7 +80,6 @@ public class CitaController {
     }
 
     @PutMapping("/{id}/estado")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESIONAL')")
     @Operation(summary = "Actualizar estado de cita")
     public ResponseEntity<CitaDTO> actualizarEstado(
             @PathVariable Long id,
@@ -103,7 +95,6 @@ public class CitaController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar cita")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         citaService.eliminar(id);

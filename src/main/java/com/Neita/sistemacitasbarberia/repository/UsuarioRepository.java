@@ -18,12 +18,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     List<Usuario> findByActivoTrue();
 
-    @Query("SELECT u FROM Usuario u WHERE u.activo = true AND :rol MEMBER OF u.roles")
-    List<Usuario> findByRol(@Param("rol") String rol);
-
     @Query("SELECT u FROM Usuario u WHERE u.nombre LIKE %:nombre% AND u.activo = true")
     List<Usuario> buscarPorNombre(@Param("nombre") String nombre);
-
-    @Query("SELECT COUNT(u) FROM Usuario u WHERE :rol MEMBER OF u.roles")
-    Long contarPorRol(@Param("rol") String rol);
 }
