@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios - Neita's Barber Shop</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .servicios-page {
+            padding: 60px 0;
+            min-height: 100vh;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .page-header h1 {
+            font-size: 3rem;
+            color: var(--color-secondary);
+            margin-bottom: 10px;
+        }
+        
+        .page-header p {
+            font-size: 1.2rem;
+            color: var(--color-accent);
+        }
+        
+        .servicios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .servicio-card {
+            background-color: var(--color-light);
+            padding: 30px;
+            border: 2px solid var(--color-border);
+            border-radius: 10px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .servicio-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .servicio-card h3 {
+            color: var(--color-secondary);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .servicio-card p {
+            color: var(--color-text);
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .servicio-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .servicio-precio {
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            font-weight: bold;
+        }
+        
+        .servicio-duracion {
+            color: var(--color-accent);
+            font-size: 0.9rem;
+        }
+        
+        .btn-agendar {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--color-primary);
+            color: var(--color-secondary);
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-agendar:hover {
+            background-color: var(--color-accent);
+            color: var(--color-light);
+        }
+        
+        .admin-actions {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .btn-edit, .btn-delete {
+            padding: 8px 15px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-edit {
+            background-color: #ffc107;
+            color: #000;
+        }
+        
+        .btn-delete {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        
+        .btn-add-servicio {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--color-primary);
+            color: var(--color-secondary);
+            border: none;
+            border-radius: 50%;
+            font-size: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+        
+        .btn-add-servicio:hover {
+            transform: scale(1.1);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: var(--color-light);
+            margin: 5% auto;
+            padding: 30px;
+            border: 2px solid var(--color-border);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--color-secondary);
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--color-border);
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--color-accent);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <h1>Neita's</h1>
+                    <span>BARBER SHOP</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/profesionales">Barberos</a></li>
+                    <li><a href="/galeria">Galería</a></li>
+                    <li><a href="/productos">Productos</a></li>
+                    <li><a href="/login" class="btn-login" id="loginBtn">Iniciar Sesión</a></li>
+                    <li><a href="/registro" class="btn-registro" id="registroBtn">Registrarse</a></li>
+                    <li><a href="#" class="btn-registro" id="logoutBtn" style="display:none;" onclick="logout()">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Servicios Page -->
+    <section class="servicios-page">
+        <div class="container">
+            <div class="page-header">
+                <h1>Nuestros Servicios</h1>
+                <p>Calidad profesional en cada corte</p>
+            </div>
+            
+            <div id="loading" class="loading">Cargando servicios...</div>
+            <div id="serviciosGrid" class="servicios-grid"></div>
+        </div>
+    </section>
+
+    <!-- Botón flotante para agregar servicio (solo admin/profesional) -->
+    <button class="btn-add-servicio" id="btnAddServicio" onclick="openModal()">+</button>
+
+    <!-- Modal para crear/editar servicio -->
+    <div id="servicioModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Nuevo Servicio</h2>
+            <form id="servicioForm">
+                <input type="hidden" id="servicioId">
+                <div class="form-group">
+                    <label for="nombre">Nombre del Servicio</label>
+                    <input type="text" id="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea id="descripcion" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="duracion">Duración</label>
+                    <input type="text" id="duracion" placeholder="Ej: 45 minutos" required>
+                </div>
+                <div class="form-group">
+                    <label for="precio">Precio (COP)</label>
+                    <input type="number" id="precio" required>
+                </div>
+                <button type="submit" class="btn-agendar" style="width:100%;">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        let usuario = null;
+        let isAdmin = false;
+        let isProfesional = false;
+        
+        // Verificar autenticación al cargar
+        window.addEventListener('DOMContentLoaded', () => {
+            const usuarioData = localStorage.getItem('usuario');
+            if (usuarioData) {
+                usuario = JSON.parse(usuarioData);
+                isAdmin = usuario.roles && usuario.roles.includes('ADMIN');
+                isProfesional = usuario.roles && (usuario.roles.includes('PROFESIONAL') || usuario.roles.includes('ADMIN'));
+                
+                // Actualizar UI
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('registroBtn').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'block';
+                
+                if (isProfesional) {
+                    document.getElementById('btnAddServicio').style.display = 'block';
+                }
+            }
+            
+            cargarServicios();
+        });
+        
+        async function cargarServicios() {
+            try {
+                const response = await fetch('http://localhost:8088/api/servicios/activos');
+                const servicios = await response.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                const grid = document.getElementById('serviciosGrid');
+                grid.innerHTML = '';
+                
+                servicios.forEach(servicio => {
+                    const card = document.createElement('div');
+                    card.className = 'servicio-card';
+                    card.innerHTML = `
+                        <h3>${servicio.nombre}</h3>
+                        <p>${servicio.descripcion}</p>
+                        <div class="servicio-info">
+                            <div>
+                                <div class="servicio-precio">$${servicio.precio.toLocaleString('es-CO')}</div>
+                                <div class="servicio-duracion">⏱️ ${servicio.duracion}</div>
+                            </div>
+                            <button class="btn-agendar" onclick="verBarberos(${servicio.id})">Ver Barberos</button>
+                        </div>
+                        ${isProfesional ? `
+                        <div class="admin-actions" style="display:block;">
+                            <button class="btn-edit" onclick="editarServicio(${servicio.id})">Editar</button>
+                            ${isAdmin ? `<button class="btn-delete" onclick="eliminarServicio(${servicio.id})">Eliminar</button>` : ''}
+                        </div>
+                        ` : ''}
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                document.getElementById('loading').textContent = 'Error al cargar servicios';
+            }
+        }
+        
+        function verBarberos(servicioId) {
+            window.location.href = `/profesionales?servicio=${servicioId}`;
+        }
+        
+        function openModal() {
+            document.getElementById('servicioModal').style.display = 'block';
+            document.getElementById('modalTitle').textContent = 'Nuevo Servicio';
+            document.getElementById('servicioForm').reset();
+            document.getElementById('servicioId').value = '';
+        }
+        
+        function closeModal() {
+            document.getElementById('servicioModal').style.display = 'none';
+        }
+        
+        async function editarServicio(id) {
+            try {
+                const response = await fetch(`http://localhost:8088/api/servicios/${id}`);
+                const servicio = await response.json();
+                
+                document.getElementById('servicioId').value = servicio.id;
+                document.getElementById('nombre').value = servicio.nombre;
+                document.getElementById('descripcion').value = servicio.descripcion;
+                document.getElementById('duracion').value = servicio.duracion;
+                document.getElementById('precio').value = servicio.precio;
+                
+                document.getElementById('modalTitle').textContent = 'Editar Servicio';
+                document.getElementById('servicioModal').style.display = 'block';
+            } catch (error) {
+                alert('Error al cargar el servicio');
+            }
+        }
+        
+        async function eliminarServicio(id) {
+            if (!confirm('¿Estás seguro de eliminar este servicio?')) return;
+            
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`http://localhost:8088/api/servicios/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    alert('Servicio eliminado');
+                    cargarServicios();
+                } else {
+                    alert('Error al eliminar servicio');
+                }
+            } catch (error) {
+                alert('Error de conexión');
+            }
+        }
+        
+        document.getElementById('servicioForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('servicioId').value;
+            const servicio = {
+                nombre: document.getElementById('nombre').value,
+                descripcion: document.getElementById('descripcion').value,
+                duracion: document.getElementById('duracion').value,
+                precio: parseFloat(document.getElementById('precio').value),
+                activo: true
+            };
+            
+            try {
+                const token = localStorage.getItem('authToken');
+                const url = id ? `http://localhost:8088/api/servicios/${id}` : 'http://localhost:8088/api/servicios';
+                const method = id ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(servicio)
+                });
+                
+                if (response.ok) {
+                    alert(id ? 'Servicio actualizado' : 'Servicio creado');
+                    closeModal();
+                    cargarServicios();
+                } else {
+                    alert('Error al guardar servicio');
+                }
+            } catch (error) {
+                alert('Error de conexión');
+            }
+        });
+        
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('usuario');
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

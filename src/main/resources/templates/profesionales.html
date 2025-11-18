@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barberos - Neita's Barber Shop</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .profesionales-page {
+            padding: 60px 0;
+            min-height: 100vh;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .page-header h1 {
+            font-size: 3rem;
+            color: var(--color-secondary);
+            margin-bottom: 10px;
+        }
+        
+        .profesionales-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+        
+        .profesional-card {
+            background-color: var(--color-light);
+            padding: 30px;
+            border: 2px solid var(--color-border);
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .profesional-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .profesional-avatar {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .profesional-card h3 {
+            color: var(--color-secondary);
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .profesional-especialidad {
+            color: var(--color-accent);
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        
+        .profesional-rating {
+            color: var(--color-primary);
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .profesional-horario {
+            background-color: var(--color-bg);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-agendar {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--color-primary);
+            color: var(--color-secondary);
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .btn-agendar:hover {
+            background-color: var(--color-accent);
+            color: var(--color-light);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--color-accent);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <h1>Neita's</h1>
+                    <span>BARBER SHOP</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/profesionales">Barberos</a></li>
+                    <li><a href="/galeria">Galería</a></li>
+                    <li><a href="/productos">Productos</a></li>
+                    <li><a href="/login" class="btn-login" id="loginBtn">Iniciar Sesión</a></li>
+                    <li><a href="/registro" class="btn-registro" id="registroBtn">Registrarse</a></li>
+                    <li><a href="#" class="btn-registro" id="logoutBtn" style="display:none;" onclick="logout()">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Profesionales Page -->
+    <section class="profesionales-page">
+        <div class="container">
+            <div class="page-header">
+                <h1>Nuestros Barberos</h1>
+                <p id="subtitle">Profesionales con años de experiencia</p>
+            </div>
+            
+            <div id="loading" class="loading">Cargando barberos...</div>
+            <div id="profesionalesGrid" class="profesionales-grid"></div>
+        </div>
+    </section>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        let usuario = null;
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            const usuarioData = localStorage.getItem('usuario');
+            if (usuarioData) {
+                usuario = JSON.parse(usuarioData);
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('registroBtn').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'block';
+            }
+            
+            // Verificar si viene de servicios
+            const urlParams = new URLSearchParams(window.location.search);
+            const servicioId = urlParams.get('servicio');
+            
+            if (servicioId) {
+                cargarProfesionalesPorServicio(servicioId);
+            } else {
+                cargarProfesionales();
+            }
+        });
+        
+        async function cargarProfesionales() {
+            try {
+                const response = await fetch('http://localhost:8088/api/profesionales/activos');
+                const profesionales = await response.json();
+                mostrarProfesionales(profesionales);
+            } catch (error) {
+                document.getElementById('loading').textContent = 'Error al cargar barberos';
+            }
+        }
+        
+        async function cargarProfesionalesPorServicio(servicioId) {
+            try {
+                // Primero obtener el nombre del servicio
+                const servicioResponse = await fetch(`http://localhost:8088/api/servicios/${servicioId}`);
+                const servicio = await servicioResponse.json();
+                document.getElementById('subtitle').textContent = `Barberos que ofrecen: ${servicio.nombre}`;
+                
+                // Luego obtener los profesionales
+                const response = await fetch(`http://localhost:8088/api/profesionales/servicio/${servicioId}`);
+                const profesionales = await response.json();
+                mostrarProfesionales(profesionales, servicioId);
+            } catch (error) {
+                document.getElementById('loading').textContent = 'Error al cargar barberos';
+            }
+        }
+        
+        function mostrarProfesionales(profesionales, servicioId = null) {
+            document.getElementById('loading').style.display = 'none';
+            const grid = document.getElementById('profesionalesGrid');
+            grid.innerHTML = '';
+            
+            if (profesionales.length === 0) {
+                grid.innerHTML = '<p style="text-align:center;grid-column:1/-1;">No hay barberos disponibles</p>';
+                return;
+            }
+            
+            profesionales.forEach(profesional => {
+                const card = document.createElement('div');
+                card.className = 'profesional-card';
+                
+                // Emojis aleatorios para avatares
+                const avatares = ['👨‍🦱', '👨‍🦰', '👨‍🦳', '👨', '🧔'];
+                const avatar = avatares[Math.floor(Math.random() * avatares.length)];
+                
+                card.innerHTML = `
+                    <div class="profesional-avatar">${avatar}</div>
+                    <h3>${profesional.usuarioNombre || 'Barbero Profesional'}</h3>
+                    <div class="profesional-especialidad">${profesional.especialidad}</div>
+                    <div class="profesional-rating">⭐⭐⭐⭐⭐ ${(Math.random() * 0.5 + 4.5).toFixed(1)}</div>
+                    <div class="profesional-horario">
+                        📅 Lun - Vie: 9:00 AM - 8:00 PM<br>
+                        📅 Sáb: 9:00 AM - 6:00 PM
+                    </div>
+                    <button class="btn-agendar" onclick="agendarCita(${profesional.id}, ${servicioId})">
+                        Agendar Cita
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+        
+        function agendarCita(profesionalId, servicioId) {
+            if (!usuario) {
+                alert('Debes iniciar sesión para agendar una cita');
+                window.location.href = '/login';
+                return;
+            }
+            
+            // Redirigir a página de agendar cita con parámetros
+            const params = new URLSearchParams({
+                profesional: profesionalId,
+                ...(servicioId && { servicio: servicioId })
+            });
+            window.location.href = `/mis-citas?${params.toString()}`;
+        }
+        
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('usuario');
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

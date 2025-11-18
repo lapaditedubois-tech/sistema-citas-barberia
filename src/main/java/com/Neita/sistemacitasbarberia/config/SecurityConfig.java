@@ -48,13 +48,16 @@ public class SecurityConfig {
                 .requestMatchers("/api/profesionales/servicio/**").permitAll()
                 .requestMatchers("/api/valoraciones/profesional/**").permitAll()
                 .requestMatchers("/api/galeria/visibles/**").permitAll()
-                .requestMatchers("/api/productos/disponibles").permitAll()
+                .requestMatchers("/api/productos/disponibles", "/api/productos/en-stock").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/profesionales/**").permitAll()
                 
                 // Swagger/OpenAPI
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                 
-                // Recursos estáticos y vistas Thymeleaf
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/", "/login", "/registro").permitAll()
+                // Recursos estáticos y vistas Thymeleaf - TODAS PÚBLICAS
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                .requestMatchers("/", "/login", "/registro", "/servicios", "/profesionales", "/galeria", "/productos").permitAll()
+                .requestMatchers("/dashboard", "/mis-citas", "/admin/**").authenticated()
                 
                 // Endpoints de cliente
                 .requestMatchers("/api/citas/usuario/**").hasAnyRole("CLIENTE", "ADMIN")

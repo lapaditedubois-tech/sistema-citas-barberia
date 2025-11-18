@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería - Neita's Barber Shop</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .galeria-page {
+            padding: 60px 0;
+            min-height: 100vh;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .page-header h1 {
+            font-size: 3rem;
+            color: var(--color-secondary);
+        }
+        
+        .galeria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .galeria-item {
+            background-color: var(--color-light);
+            border: 2px solid var(--color-border);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .galeria-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .galeria-img {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+        }
+        
+        .galeria-info {
+            padding: 20px;
+        }
+        
+        .galeria-info h3 {
+            color: var(--color-secondary);
+            margin-bottom: 10px;
+        }
+        
+        .galeria-barbero {
+            color: var(--color-accent);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <h1>Neita's</h1>
+                    <span>BARBER SHOP</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/profesionales">Barberos</a></li>
+                    <li><a href="/galeria">Galería</a></li>
+                    <li><a href="/productos">Productos</a></li>
+                    <li><a href="/login" class="btn-login" id="loginBtn">Iniciar Sesión</a></li>
+                    <li><a href="/registro" class="btn-registro" id="registroBtn">Registrarse</a></li>
+                    <li><a href="#" class="btn-registro" id="logoutBtn" style="display:none;" onclick="logout()">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="galeria-page">
+        <div class="container">
+            <div class="page-header">
+                <h1>Galería de Trabajos</h1>
+                <p>Nuestros mejores cortes</p>
+            </div>
+            
+            <div id="galeriaGrid" class="galeria-grid">
+                <!-- Ejemplo de trabajos -->
+                <div class="galeria-item">
+                    <div class="galeria-img">✂️</div>
+                    <div class="galeria-info">
+                        <h3>Corte Clásico</h3>
+                        <p class="galeria-barbero">Por Carlos Neita</p>
+                    </div>
+                </div>
+                <div class="galeria-item">
+                    <div class="galeria-img">🪒</div>
+                    <div class="galeria-info">
+                        <h3>Afeitado Tradicional</h3>
+                        <p class="galeria-barbero">Por Miguel Rodríguez</p>
+                    </div>
+                </div>
+                <div class="galeria-item">
+                    <div class="galeria-img">💈</div>
+                    <div class="galeria-info">
+                        <h3>Diseño de Barba</h3>
+                        <p class="galeria-barbero">Por Juan Martínez</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const usuarioData = localStorage.getItem('usuario');
+            if (usuarioData) {
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('registroBtn').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'block';
+            }
+        });
+        
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('usuario');
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
