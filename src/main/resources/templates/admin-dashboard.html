@@ -606,23 +606,39 @@
 
         // Verificar autenticación y rol
         window.addEventListener('DOMContentLoaded', () => {
+            console.log('Admin Dashboard: Verificando autenticación...');
+            
             const usuarioStr = localStorage.getItem('usuario');
+            console.log('Usuario en localStorage:', usuarioStr);
+            
             if (!usuarioStr) {
+                console.log('No hay usuario en localStorage, redirigiendo a login');
+                alert('Sesión no encontrada. Por favor inicia sesión.');
                 window.location.href = '/login';
                 return;
             }
 
-            usuarioData = JSON.parse(usuarioStr);
-            
-            // Verificar que sea administrador
-            if (!usuarioData.roles || !usuarioData.roles.includes('ADMIN')) {
-                showAlert('No tienes permisos para acceder a esta página', 'error');
-                setTimeout(() => window.location.href = '/login', 2000);
-                return;
-            }
+            try {
+                usuarioData = JSON.parse(usuarioStr);
+                console.log('Usuario parseado:', usuarioData);
+                console.log('Roles del usuario:', usuarioData.roles);
+                
+                // Verificar que sea administrador
+                if (!usuarioData.roles || !usuarioData.roles.includes('ADMIN')) {
+                    console.log('Usuario no tiene rol ADMIN');
+                    alert('No tienes permisos de administrador');
+                    window.location.href = '/login';
+                    return;
+                }
 
-            document.getElementById('welcomeMessage').textContent = `Bienvenido, ${usuarioData.nombre}`;
-            cargarTodosDatos();
+                console.log('Usuario autenticado correctamente como ADMIN');
+                document.getElementById('welcomeMessage').textContent = `Bienvenido, ${usuarioData.nombre}`;
+                cargarTodosDatos();
+            } catch (error) {
+                console.error('Error al parsear datos de usuario:', error);
+                alert('Error al cargar datos de sesión');
+                window.location.href = '/login';
+            }
         });
 
         async function cargarTodosDatos() {

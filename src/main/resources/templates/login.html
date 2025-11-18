@@ -180,9 +180,16 @@
                 if (response.ok) {
                     const data = await response.json();
                     
+                    console.log('Login exitoso, datos recibidos:', data);
+                    console.log('Roles recibidos:', data.roles);
+                    
                     // Guardar token y datos de usuario
                     localStorage.setItem('authToken', data.token);
                     localStorage.setItem('usuario', JSON.stringify(data));
+                    
+                    console.log('Datos guardados en localStorage');
+                    console.log('Token:', localStorage.getItem('authToken'));
+                    console.log('Usuario:', localStorage.getItem('usuario'));
                     
                     // Mostrar mensaje de éxito
                     alertDiv.className = 'alert alert-success';
@@ -190,15 +197,16 @@
                     alertDiv.style.display = 'block';
                     
                     // Redirigir según el rol
-                    setTimeout(() => {
-                        if (data.roles.includes('ADMIN')) {
-                            window.location.href = '/admin/dashboard';
-                        } else if (data.roles.includes('PROFESIONAL')) {
-                            window.location.href = '/profesional/dashboard';
-                        } else {
-                            window.location.href = '/mis-citas';
-                        }
-                    }, 1000);
+                    if (data.roles.includes('ADMIN')) {
+                        console.log('Redirigiendo a admin dashboard');
+                        window.location.href = '/admin/dashboard';
+                    } else if (data.roles.includes('PROFESIONAL')) {
+                        console.log('Redirigiendo a profesional dashboard');
+                        window.location.href = '/profesional/dashboard';
+                    } else {
+                        console.log('Redirigiendo a mis citas');
+                        window.location.href = '/mis-citas';
+                    }
                 } else {
                     const error = await response.json();
                     alertDiv.className = 'alert alert-error';
