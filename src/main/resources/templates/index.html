@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neita's Barber Shop - Barbería Clásica</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <h1>Neita's</h1>
+                    <span>BARBER SHOP</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/servicios">Servicios</a></li>
+                    <li><a href="/profesionales">Barberos</a></li>
+                    <li><a href="/galeria">Galería</a></li>
+                    <li><a href="/productos">Productos</a></li>
+                    <li><a href="/login" class="btn-login">Iniciar Sesión</a></li>
+                    <li><a href="/registro" class="btn-registro">Registrarse</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h2>Estilo Clásico, Servicio Moderno</h2>
+            <p>Más de 10 años de experiencia en cortes tradicionales y modernos</p>
+            <a href="/servicios" class="btn-primary">Ver Servicios</a>
+            <a href="/registro" class="btn-secondary">Agendar Cita</a>
+        </div>
+    </section>
+
+    <!-- Servicios Destacados -->
+    <section class="servicios-destacados">
+        <div class="container">
+            <h2 class="section-title">Nuestros Servicios</h2>
+            <div class="servicios-grid">
+                <div class="servicio-card">
+                    <div class="servicio-icon">✂️</div>
+                    <h3>Corte Clásico</h3>
+                    <p>Cortes tradicionales con técnicas modernas</p>
+                    <span class="precio">Desde $25,000 COP</span>
+                </div>
+                <div class="servicio-card">
+                    <div class="servicio-icon">🪒</div>
+                    <h3>Afeitado Tradicional</h3>
+                    <p>Afeitado con navaja y toalla caliente</p>
+                    <span class="precio">Desde $20,000 COP</span>
+                </div>
+                <div class="servicio-card">
+                    <div class="servicio-icon">💈</div>
+                    <h3>Barba y Bigote</h3>
+                    <p>Diseño y mantenimiento de barba</p>
+                    <span class="precio">Desde $18,000 COP</span>
+                </div>
+                <div class="servicio-card">
+                    <div class="servicio-icon">🎨</div>
+                    <h3>Coloración</h3>
+                    <p>Tintes y mechas profesionales</p>
+                    <span class="precio">Desde $35,000 COP</span>
+                </div>
+            </div>
+            <div class="text-center">
+                <a href="/servicios" class="btn-primary">Ver Todos los Servicios</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Profesionales -->
+    <section class="profesionales-section">
+        <div class="container">
+            <h2 class="section-title">Nuestros Barberos</h2>
+            <p class="section-subtitle">Profesionales con años de experiencia</p>
+            <div class="profesionales-grid">
+                <div class="profesional-card">
+                    <div class="profesional-img">👨‍🦱</div>
+                    <h3>Carlos Neita</h3>
+                    <p class="especialidad">Especialista en Cortes Clásicos</p>
+                    <div class="rating">⭐⭐⭐⭐⭐ 4.9</div>
+                </div>
+                <div class="profesional-card">
+                    <div class="profesional-img">👨‍🦰</div>
+                    <h3>Miguel Rodríguez</h3>
+                    <p class="especialidad">Experto en Afeitado Tradicional</p>
+                    <div class="rating">⭐⭐⭐⭐⭐ 4.8</div>
+                </div>
+                <div class="profesional-card">
+                    <div class="profesional-img">👨‍🦳</div>
+                    <h3>Juan Martínez</h3>
+                    <p class="especialidad">Maestro en Diseño de Barba</p>
+                    <div class="rating">⭐⭐⭐⭐⭐ 5.0</div>
+                </div>
+            </div>
+            <div class="text-center">
+                <a href="/profesionales" class="btn-primary">Ver Todos los Barberos</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Neita's Barber Shop</h3>
+                    <p>Estilo clásico, servicio moderno</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Horarios</h4>
+                    <p>Lunes - Viernes: 9:00 AM - 8:00 PM</p>
+                    <p>Sábados: 9:00 AM - 6:00 PM</p>
+                    <p>Domingos: 10:00 AM - 4:00 PM</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <p>📞 +57 300 123 4567</p>
+                    <p>📧 info@neitasbarbershop.com</p>
+                    <p>📍 Bogotá, Colombia</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Neita's Barber Shop. Todos los derechos reservados.</p>
+                <p>Desarrollado por David Neita - SENA Ficha 3063267</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
